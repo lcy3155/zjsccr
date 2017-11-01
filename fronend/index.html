@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../../js/jquery-1.11.3.js"></script>
+    <!--<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>-->
+    <style>
+
+        #nr{
+            width: 500px;
+            padding: 10px;
+            border: 1px solid #111;
+        }
+        #nr>div{
+            border-bottom: 1px solid #111;
+            line-height: 50px;
+        }
+        #nr span{float: right;cursor: pointer;}
+    </style>
+</head>
+<body>
+<div class="tj">
+    <input id="yi" type="text" placeholder="name">
+    <input id="er" type="text" placeholder="时间:格式只能是 2017-1-1">
+    <button id="btn">确定添加</button>
+</div>
+<div id="nr"></div>
+
+
+
+<script>
+    $(function(){
+        $("#btn").click(function(){
+            $.ajax({
+                url:"http://localhost:3000/item/jia",
+                type:"POST",
+                data:{
+                    a:$('#yi').val(),
+                    b:$('#er').val()
+                },
+                success:function(e){
+                    console.log(e)
+                               var str = ""
+                    for(var i in e){
+                        str += "<div>"+e[i].title+"<b>"+e[i].time+"</b><span data-id='"+e[i].id+"'>X</span></div>"
+                    }
+                    $("#nr").html(str)
+                }
+            })
+
+        })
+        $.ajax({
+            url:"http://localhost:3000/item/list",
+            type:"GET",
+            success:function(e){
+                //console.log(e)
+                for(var i in e){
+                    $("#nr").append("<div>"+e[i].title+"<b>"+e[i].time+"</b><span data-id='"+e[i].id+"'>X</span></div>")
+            }
+
+
+            }
+        })
+        $(document).on('click','span',function(){
+            var id = $(this).attr('data-id')
+            var _this= $(this)
+            $.ajax({
+                url:"http://localhost:3000/item/delete",
+                type:"POST",
+                data:{
+                    abc:id
+                },
+                success:function(e){
+                    console.log(e)
+                    _this.parent().remove()
+                }
+            })
+        })
+
+    })
+</script>
+
+</body>
+</html>
